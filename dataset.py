@@ -3,18 +3,72 @@ import torch.utils.data as data
 from PIL import Image
 import os
 import csv
-
 def pil_loader(path):
     """
     open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
     :param path: image path
     :return: image data
     """
-    with open(path, 'rb') as f:
-        with Image.open(f) as img:
-            #return img.convert('RGB')
-            return img.convert('L')
+    try:
+        with open(path, 'rb') as f:
+            with Image.open(f) as img:
+                #return img.convert('RGB')
+                return img.convert('L')
+    except:
+        all_parts = path.split("\\")
+        img_p = all_parts[-1]
+        img_num = int(img_p.replace('img_', '').replace('.png', ''))
+        while img_num >= 0:
+            try:
+                path = "\\".join(all_parts[:-1]) + f"\\img_{img_num-1}.png"
+                with open(path, 'rb') as f:
+                    with Image.open(f) as img:
+                        #return img.convert('RGB')
+                        return img.convert('L')
+            except:
+                img_num -= 1
+                continue
 
+    all_parts = path.split("\\")
+    img_p = all_parts[-1]
+    img_num = int(img_p.replace('img_', '').replace('.png', ''))
+    while img_num <= 10000:
+        try:
+            path = "\\".join(all_parts[:-1]) + f"\\img_{img_num+1}.png"
+            with open(path, 'rb') as f:
+                with Image.open(f) as img:
+                    #return img.convert('RGB')
+                    return img.convert('L')
+        except:
+            img_num += 1
+            continue
+   
+
+    all_parts = path.split("\\")
+    img_p = all_parts[-1]
+    img_num = int(img_p.replace('img_', '').replace('.png', ''))
+    while img_num <= 10000:
+        try:
+            path = "\\".join(all_parts[:-1]) + f"\\img_{img_num+1}.png"
+            with open(path, 'rb') as f:
+                with Image.open(f) as img:
+                    #return img.convert('RGB')
+                    return img.convert('L')
+        except:
+            img_num += 1
+            continue
+        with open(path, 'rb') as f:
+            with Image.open(f) as img:
+                #return img.convert('RGB')
+                return img.convert('L')
+   
+# def tf_record_loader(path):
+#     index_path =None
+#     description = {"image":"byte","label":"int"}
+#     dataset = TFRecordDataset(path,index_path,description)
+#         parsed_features = tf.io.parse_single_example(example_proto, feature_description)
+
+#     return dataset         
 def accimage_loader(path):
     """
     compared with PIL, accimage loader eliminates useless function within class, so that it is faster than PIL

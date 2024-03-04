@@ -22,10 +22,10 @@ from dataset_test import DAD_Test
 #==========================================================================================================
 
 #======================================Hyperparameters=====================================================
-root_path = '/usr/home/sut/datasets/DAD/DAD/'  #root path of the dataset
+root_path = 'C:\\Users\\iiala\\OneDrive\\Desktop\\DAD\\DAD\\'  #root path of the dataset
 show_which = 'front_depth'  # show which view or modalities: {'front_depth', 'front_IR', 'top_depth', 'top_IR'}
 threshold = 0.81  # the threshold
-delay = 1  # The sample will be processed and shown with a delay of 'delay' ms.
+delay = 0  # The sample will be processed and shown with a delay of 'delay' ms.
            # If delay = 0, The code runs one sample at a time, press any key to process the next sample
 
 sample_size = 112
@@ -42,6 +42,7 @@ normal_vec_front_ir = np.load('./normvec/normal_vec_front_ir.npy')
 normal_vec_top_d = np.load('./normvec/normal_vec_top_d.npy')
 normal_vec_top_ir = np.load('./normvec/normal_vec_top_ir.npy')
 
+#copy =true
 normal_vec_front_d = torch.from_numpy(normal_vec_front_d)
 normal_vec_front_ir = torch.from_numpy(normal_vec_front_ir)
 normal_vec_top_d = torch.from_numpy(normal_vec_top_d)
@@ -135,30 +136,22 @@ model_front_d = resnet.resnet18(
     output_dim=feature_dim,
     sample_size=sample_size,
     sample_duration=sample_duration,
-    shortcut_type=shortcut_type,
-)
-
+    shortcut_type=shortcut_type,)
 model_front_ir = resnet.resnet18(
     output_dim=feature_dim,
     sample_size=sample_size,
     sample_duration=sample_duration,
-    shortcut_type=shortcut_type,
-)
-
+    shortcut_type=shortcut_type,)
 model_top_d = resnet.resnet18(
     output_dim=feature_dim,
     sample_size=sample_size,
     sample_duration=sample_duration,
-    shortcut_type=shortcut_type,
-)
-
+    shortcut_type=shortcut_type,)
 model_top_ir = resnet.resnet18(
     output_dim=feature_dim,
     sample_size=sample_size,
     sample_duration=sample_duration,
-    shortcut_type=shortcut_type,
-)
-
+    shortcut_type=shortcut_type,)
 model_front_d = nn.DataParallel(model_front_d, device_ids=None)
 model_front_ir = nn.DataParallel(model_front_ir, device_ids=None)
 model_top_d = nn.DataParallel(model_top_d, device_ids=None)
@@ -186,6 +179,8 @@ model_top_ir.eval()
 
 print('===========================================Calculating Scores=========================================')
 for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, test_loader_front_ir, test_loader_top_d, test_loader_top_ir)):
+    print(f"Batch {batch}: data1={data1}, data2={data2}, data3={data3}, data4={data4}")
+
     if use_cuda:
         data1[0] = data1[0].cuda()
         data1[1] = data1[1].cuda()
@@ -222,6 +217,7 @@ for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, te
     print(f'Img: {img_path} | score: {sim} | Action: {action}')
 
     img = cv2.imread(img_path)
+    
     font = cv2.FONT_HERSHEY_COMPLEX_SMALL
     score = 'Score: ' + str(sim)
     img = cv2.putText(img, score, (80, 20), font, 0.8, (0, 0, 255), 1)
@@ -229,8 +225,12 @@ for batch, (data1, data2, data3, data4) in enumerate(zip(test_loader_front_d, te
         img = cv2.putText(img, action, (93, 35), font, 0.8, (0, 0, 255), 1)
     elif action == 'Distracted':
         img = cv2.putText(img, action, (83, 35), font, 0.8, (0, 0, 255), 1)
-    cv2.namedWindow('Demo', cv2.WINDOW_NORMAL)
-    cv2.imshow('Demo', img)
+    cv2.namedWindow('DEMO', cv2.WINDOW_NORMAL)
+    cv2.imshow('DEMO', img)
+# Save the image (uncomment the following lines to save the images)
+
+    # save_path = os.path.join('Downloads', f'result_{batch}.png')
+    # cv2.imwrite(save_path, img)
     cv2.waitKey(delay)
 
 cv2.destroyAllWindows()

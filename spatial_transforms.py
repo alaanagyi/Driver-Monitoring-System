@@ -61,13 +61,13 @@ class ToTensor(object):
 
         if accimage is not None and isinstance(pic, accimage.Image):
             nppic = np.zeros(
-                [pic.channels, pic.height, pic.width], dtype=np.float32)
+                [pic.channels, pic.height, pic.width], dtype=float)
             pic.copyto(nppic)
             return torch.from_numpy(nppic)
 
         # handle PIL Image
         if pic.mode == 'I':
-            img = torch.from_numpy(np.array(pic, np.float32, copy=False))
+            img = torch.from_numpy(np.array(pic, float, copy=False))
         elif pic.mode == 'I;16':
             img = torch.from_numpy(np.array(pic, np.int16, copy=False))
         else:
@@ -496,7 +496,7 @@ class SaltImage(object):
 
         if self.p < 0.10:
             data_final = []
-            img = img.astype(np.float)
+            img = img.astype(float)
             img_shape = img.shape
             noise = np.random.randint(self.ratio, size=img_shape)
             img = np.where(noise == 0, 255, img)
@@ -525,7 +525,7 @@ class Dropout(object):
 
         if self.p < 0.10:
             data_final = []
-            img = img.astype(np.float)
+            img = img.astype(float)
             img_shape = img.shape
             noise = np.random.randint(self.ratio, size=img_shape)
             img = np.where(noise == 0, 0, img)
@@ -552,7 +552,7 @@ class MultiplyValues():
         if is_PIL:
             img = np.asarray(img)
 
-        image = img.astype(np.float64)
+        image = img.astype(float)
         image *= self.sample
         image = np.where(image > 255, 255, image)
         image = np.where(image < 0, 0, image)

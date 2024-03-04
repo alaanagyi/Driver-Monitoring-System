@@ -6,18 +6,22 @@ import numpy as np
 class LoopPadding(object):
 
     def __init__(self, size, downsample):
-        self.size = size
-        self.downsample = downsample
+        self.size = size #desired (number of frames of the clip)
+        self.downsample = downsample #indicating how many frames to skip between selected frames in the clip.
 
     def __call__(self, frame_indices):
-        vid_duration  = len(frame_indices)
-        clip_duration = self.size * self.downsample
+        vid_duration  = len(frame_indices) #Total number of frames in the original video
+        clip_duration = self.size * self.downsample #The desired clip duration, calculated as size * downsample.
         out = frame_indices
 
         for index in out:
             if len(out) >= clip_duration:
                 break
             out.append(index)
+#The loop in the method extends the frame_indices list by 
+# repeating frames until the desired clip duration is reached. 
+# If the original video is shorter than the desired clip,
+# it loops through the frames of the video to pad the clip.
 
         selected_frames = [out[i] for i in range(0, clip_duration, self.downsample)]
 
@@ -40,7 +44,7 @@ class TemporalBeginCrop(object):
 
     def __call__(self, frame_indices):
         vid_duration  = len(frame_indices)
-        clip_duration = self.size * self.downsample
+        clip_duration = self.size * self.downsample #desired
 
         out = frame_indices[:clip_duration]
 
