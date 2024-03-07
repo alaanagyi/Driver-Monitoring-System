@@ -32,7 +32,7 @@ MANIFEST
 *.spec
 
 # folders
-checkpoints/
+#checkpoints/
 logs/
 normvec/
 score/
