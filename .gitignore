@@ -38,7 +38,7 @@ normvec/
 score/
 
 # trained models
-*.pth
+
 
 # log files
 *.log
