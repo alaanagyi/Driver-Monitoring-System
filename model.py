@@ -4,7 +4,7 @@ from models import shufflenet, shufflenetv2, resnet, mobilenet, mobilenetv2,swin
 from utils import _construct_depth_model
 
 def generate_model(args):
-    assert args.model_type in ['resnet', 'shufflenet', 'shufflenetv2', 'mobilenet', 'mobilenetv2']
+    assert args.model_type in ['resnet', 'shufflenet', 'shufflenetv2', 'mobilenet', 'mobilenetv2','swintiny']
     if args.pre_train_model == False or args.mode == 'test':
         print('Without Pre-trained model')
         if args.model_type == 'resnet':
@@ -67,26 +67,7 @@ def generate_model(args):
                 pre_train=args.pre_train_model
             )
         elif args.model_type == 'swintiny':
-            model = swin_transformer.get_model(
-                img_size=args.img_size,
-                patch_size=args.patch_size,
-                in_chans=args.in_chans,
-                num_classes=args.num_classes,
-                embed_dim=args.embed_dim,
-                depths=args.depths,
-                num_heads=args.num_heads,
-                window_size=args.window_size,
-                mlp_ratio=args.mlp_ratio,
-                qkv_bias=args.qkv_bias,
-                qk_scale=args.qk_scale,
-                drop_rate=args.drop_rate,
-                attn_drop_rate=args.attn_drop_rate,
-                drop_path_rate=args.drop_path_rate,
-                norm_layer=args.norm_layer,
-                ape=args.ape,
-                patch_norm=args.patch_norm,
-                use_checkpoint=args.norm,
-            )
+            model = swin_transformer.get_model()
 
         model = nn.DataParallel(model, device_ids=None)
     else:
