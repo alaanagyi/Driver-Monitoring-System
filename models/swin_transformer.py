@@ -490,7 +490,7 @@ class SwinTransformer3D(nn.Module):
                  num_heads=1,
                  window_size=(2,7,7),
                  mlp_ratio=4.,
-                 qkv_bias=True,
+                 qkv_bias=False,
                  qk_scale=None,
                  drop_rate=0.,
                  attn_drop_rate=0.,
