@@ -498,7 +498,9 @@ class SwinTransformer3D(nn.Module):
                  norm_layer=nn.LayerNorm,
                  patch_norm=False,
                  frozen_stages=-1,
-                 use_checkpoint=False):
+                 use_checkpoint=False,
+                  num_classes=100
+                ):
         super().__init__()
 
         self.pretrained = pretrained
@@ -543,6 +545,8 @@ class SwinTransformer3D(nn.Module):
 
         # add a norm layer for each output
         self.norm = norm_layer(self.num_features)
+        self.avgpool = nn.AdaptiveAvgPool3d((1, 1, 1))
+        self.fc = nn.Linear(self.num_features, num_classes) 
 
         self._freeze_stages()
 
@@ -658,6 +662,9 @@ class SwinTransformer3D(nn.Module):
 
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
+        x = self.avgpool(x)
+        x = x.flatten(1)
+        x = self.fc(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
 
         return x
