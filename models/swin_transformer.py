@@ -487,7 +487,7 @@ class SwinTransformer3D(nn.Module):
                  in_chans=1,
                  embed_dim=96,
                  depths=[2, 2, 6, 2],
-                 num_heads=[3, 6, 12, 24],
+                 num_heads=1,
                  window_size=(2,7,7),
                  mlp_ratio=4.,
                  qkv_bias=True,
