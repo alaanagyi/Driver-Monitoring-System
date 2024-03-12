@@ -484,7 +484,7 @@ class SwinTransformer3D(nn.Module):
                  pretrained=None,
                  pretrained2d=True,
                  patch_size=(4,4,4),
-                 in_chans=3,
+                 in_chans=1,
                  embed_dim=96,
                  depths=[2, 2, 6, 2],
                  num_heads=[3, 6, 12, 24],
