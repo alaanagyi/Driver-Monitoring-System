@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from NCEAverage import NCEAverage
 from utils import l2_normalize
-
+import numpy as np
 
 eps = 1e-7
 
