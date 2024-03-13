@@ -2,6 +2,7 @@ import torch
 from utils import l2_normalize
 import numpy as np
 import os
+import numpy as np
 
 
 def get_normal_vector(model, train_normal_loader_for_test, cal_vec_batch_size, feature_dim, use_cuda):
