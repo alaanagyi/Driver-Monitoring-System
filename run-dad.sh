@@ -2,7 +2,7 @@ export PYTHONPATH=$PWD
 python main.py \
   --root_path /usr/home/kop/datasets/DAD/ \
   --mode train \
-  --view top_depth \
+  --view front_depth \
   --model_type resnet \
   --model_depth 18 \
   --shortcut_type A \
