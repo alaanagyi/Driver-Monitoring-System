@@ -173,7 +173,7 @@ def get_score(score_folder, mode):
     :return: the corresponding scores according to requirements
     """
     if mode not in ['top_d', 'top_ir', 'front_d', 'front_ir', 'fusion_top', 'fusion_front', 'fusion_d', 'fusion_ir', 'fusion_all']:
-        print('Please enter correct mode: top_d | top_ir | front_d | front_ir | fusion_top | fusion_front | fusion_d | fusion_ir | fusion_all')
+        print('Please Enter correct mode: top_d | top_ir | front_d | front_ir | fusion_top | fusion_front | fusion_d | fusion_ir | fusion_all')
         return
     if mode == 'top_d':
         score = np.load(os.path.join(score_folder + '/score_top_d.npy'))
