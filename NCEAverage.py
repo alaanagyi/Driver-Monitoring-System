@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 class NCEAverage(nn.Module):
     def __init__(self, feature_dim, len_neg, len_pos, tau, Z_momentum=0.9, Z=-1):
