@@ -1,10 +1,10 @@
 import torch
 from torch import nn
-from models import shufflenet, shufflenetv2, resnet, mobilenet, mobilenetv2,swin_transformer
+from models import shufflenet, shufflenetv2, resnet, mobilenet, mobilenetv2
 from utils import _construct_depth_model
 
 def generate_model(args):
-    assert args.model_type in ['resnet', 'shufflenet', 'shufflenetv2', 'mobilenet', 'mobilenetv2','swintiny']
+    assert args.model_type in ['resnet', 'shufflenet', 'shufflenetv2', 'mobilenet', 'mobilenetv2']
     if args.pre_train_model == False or args.mode == 'test':
         print('Without Pre-trained model')
         if args.model_type == 'resnet':
@@ -66,9 +66,7 @@ def generate_model(args):
                 width_mult=args.width_mult,
                 pre_train=args.pre_train_model
             )
-        elif args.model_type == 'swintiny':
-            model = swin_transformer.get_model()
-
+     
         model = nn.DataParallel(model, device_ids=None)
     else:
         if args.model_type == 'resnet':
