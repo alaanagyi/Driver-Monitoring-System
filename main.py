@@ -15,6 +15,7 @@ from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2
 import ast
 import numpy as np
 from dataset_test import DAD_Test
+from torch.utils.tensorboard import SummaryWriter
 
 
 def parse_args():
@@ -138,6 +139,9 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
             'probs': prob_meter.val,
             'lr': optimizer.param_groups[0]['lr']
         })
+        batch_writer.add_scalar('Loss', losses.val, epoch * len(train_normal_loader) + batch)
+        batch_writer.add_scalar('Probs', prob_meter.val, epoch * len(train_normal_loader) + batch)
+        batch_writer.add_scalar('Learning_Rate', optimizer.param_groups[0]['lr'], epoch * len(train_normal_loader) + batch)
         print(
             f'Training Process is running: {epoch}/{args.epochs}  | Batch: {batch} | Loss: {losses.val} ({losses.avg}) | Probs: {prob_meter.val} ({prob_meter.avg})')
     epoch_logger.log({
@@ -146,6 +150,9 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
         'probs': prob_meter.avg,
         'lr': optimizer.param_groups[0]['lr']
     })
+    epoch_writer.add_scalar('Loss', losses.avg, epoch)
+    epoch_writer.add_scalar('Probs', prob_meter.avg, epoch)
+    epoch_writer.add_scalar('Learning_Rate', optimizer.param_groups[0]['lr'], epoch)
     return memory_bank, losses.avg
 
 
@@ -289,6 +296,7 @@ if __name__ == '__main__':
             model_head = mobilenet.ProjectionHead(args.feature_dim)
         elif args.model_type == 'mobilenetv2':
             model_head = mobilenetv2.ProjectionHead(args.feature_dim)
+        
         if args.use_cuda:
             model_head.cuda()
 
@@ -327,6 +335,7 @@ if __name__ == '__main__':
 
         print(
             "==========================================!!!START TRAINING!!!==========================================")
+        writer = SummaryWriter(os.path.join(args.log_folder, 'tensorboard_logs'))
         cudnn.benchmark = True
         batch_logger = Logger(os.path.join(args.log_folder, 'batch.log'), ['epoch', 'batch', 'loss', 'probs', 'lr'],
                               args.log_resume)
@@ -335,7 +344,9 @@ if __name__ == '__main__':
         val_logger = Logger(os.path.join(args.log_folder, 'val.log'),
                             ['epoch', 'accuracy', 'normal_acc', 'anormal_acc', 'threshold', 'acc_list',
                              'normal_acc_list', 'anormal_acc_list'], args.log_resume)
-
+        batch_writer = SummaryWriter(os.path.join(args.log_folder, 'batch_logs'))
+        epoch_writer = SummaryWriter(os.path.join(args.log_folder, 'epoch_logs'))
+        val_writer = SummaryWriter(os.path.join(args.log_folder, 'epoch_logs'))
         for epoch in range(begin_epoch, begin_epoch + args.epochs + 1):
             memory_bank, loss = train(train_normal_loader, train_anormal_loader, model, model_head, nce_average,
                                       criterion, optimizer, epoch, args, batch_logger, epoch_logger, memory_bank)
@@ -364,6 +375,17 @@ if __name__ == '__main__':
                     'normal_acc_list': acc_n_list,
                     'anormal_acc_list': acc_a_list
                 })
+                # Logging to TensorBoard
+                val_writer.add_scalar('Validation/Accuracy', accuracy * 100, epoch)
+                val_writer.add_scalar('Validation/Normal_Accuracy', acc_n * 100, epoch)
+                val_writer.add_scalar('Validation/Anormal_Accuracy', acc_a * 100, epoch)
+                val_writer.add_scalar('Validation/Threshold', best_threshold, epoch)
+
+                # Logging histograms
+                val_writer.add_histogram('Validation/Acc_List', acc_list, epoch)
+                val_writer.add_histogram('Validation/Normal_Acc_List', acc_n_list, epoch)
+                val_writer.add_histogram('Validation/Anormal_Acc_List', acc_a_list, epoch)
+                
                 if accuracy > best_acc:
                     best_acc = accuracy
                     print(
@@ -661,4 +683,6 @@ if __name__ == '__main__':
             best_acc, best_threshold, AUC = evaluate(score, gt, False)
             print(
                 f'View: {mode_name}(post-processed):       Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)} \n')
-
+batch_writer.close()
+epoch_writer.close()
+val_writer.close()
