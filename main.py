@@ -381,10 +381,10 @@ if __name__ == '__main__':
                 val_writer.add_scalar('Validation/Anormal_Accuracy', acc_a * 100, epoch)
                 val_writer.add_scalar('Validation/Threshold', best_threshold, epoch)
 
-                # Logging histograms
-                val_writer.add_histogram('Validation/Acc_List', acc_list, epoch)
-                val_writer.add_histogram('Validation/Normal_Acc_List', acc_n_list, epoch)
-                val_writer.add_histogram('Validation/Anormal_Acc_List', acc_a_list, epoch)
+                # # Logging histograms
+                # val_writer.add_histogram('Validation/Acc_List', acc_list, epoch)
+                # val_writer.add_histogram('Validation/Normal_Acc_List', acc_n_list, epoch)
+                # val_writer.add_histogram('Validation/Anormal_Acc_List', acc_a_list, epoch)
                 
                 if accuracy > best_acc:
                     best_acc = accuracy
