@@ -108,11 +108,11 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
         sim = sim_3
 
         sim_list = torch.cat((sim_list, sim.squeeze().cpu()))
-        label_list = torch.cat((label_list, data1[1].squeeze().cpu()))
-        sim_1_list = torch.cat((sim_1_list, sim_1.squeeze().cpu()))
-        sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
+        label_list = torch.cat((label_list, data3[1].squeeze().cpu()))
+        # sim_1_list = torch.cat((sim_1_list, sim_1.squeeze().cpu()))
+        # sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
         sim_3_list = torch.cat((sim_3_list, sim_3.squeeze().cpu()))
-        sim_4_list = torch.cat((sim_4_list, sim_4.squeeze().cpu()))
+        # sim_4_list = torch.cat((sim_4_list, sim_4.squeeze().cpu()))
         print(f'Evaluating: Batch {batch + 1} / {total_batch}')
 
     # np.save(os.path.join(score_folder, 'score_front_d.npy'), sim_1_list.numpy())
