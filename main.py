@@ -657,22 +657,25 @@ if __name__ == '__main__':
         #                                       args.use_cuda)
         # np.save(os.path.join(args.normvec_folder, 'normal_vec_top_ir.npy'), normal_vec_top_ir.cpu().numpy())
 
-        cal_score(model_front_d, model_top_d, normal_vec_front_d,
-                  normal_vec_top_d, test_loader_front_d,
-                  test_loader_top_d, score_folder, args.use_cuda)
+        # cal_score(model_front_d, model_top_d, normal_vec_front_d,
+        #           normal_vec_top_d, test_loader_front_d,
+        #           test_loader_top_d, score_folder, args.use_cuda)
+        cal_score(model_top_d=model_top_d,normal_vec_top_d=normal_vec_top_d, test_loader_top_d=test_loader_top_d, 
+                  score_folder=score_folder,use_cuda=args.use_cuda)
 
         gt = get_fusion_label(os.path.join(args.root_path, 'LABEL.csv'))
 
-        hashmap = {'top_d': 'Top(D)',
-                   'top_ir': 'Top(IR)',
-                   'fusion_top': 'Top(DIR)',
-                   'front_d': 'Front(D)',
-                   'front_ir': 'Front(IR)',
-                   'fusion_front': 'Front(DIR)',
-                   'fusion_d': 'Fusion(D)',
-                   'fusion_ir': 'Fusion(IR)',
-                   'fusion_all': 'Fusion(DIR)'
-                   }
+        # hashmap = {'top_d': 'Top(D)',
+        #            'top_ir': 'Top(IR)',
+        #            'fusion_top': 'Top(DIR)',
+        #            'front_d': 'Front(D)',
+        #            'front_ir': 'Front(IR)',
+        #            'fusion_front': 'Front(DIR)',
+        #            'fusion_d': 'Fusion(D)',
+        #            'fusion_ir': 'Fusion(IR)',
+        #            'fusion_all': 'Fusion(DIR)'
+        #            }
+        hashmap = {'top_d': 'Top(D))'}
 
         for mode, mode_name in hashmap.items():
             score = get_score(score_folder, mode)
