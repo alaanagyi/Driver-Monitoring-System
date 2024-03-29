@@ -79,16 +79,16 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
     sim_4_list = torch.zeros(0)
     label_list = torch.zeros(0).type(torch.LongTensor)
     # for batch, (data1, data2, data3, data4) in enumerate(
-    for batch, data1 in enumerate(test_loader_top_d):
+    for batch, data3 in enumerate(test_loader_top_d):
             # zip(test_loader_front_d, test_loader_front_ir, test_loader_top_d, test_loader_top_ir)):
 
         if use_cuda:
-            data1[0] = data1[0].cuda()
-            data1[1] = data1[1].cuda()
+            # data1[0] = data1[0].cuda()
+            # data1[1] = data1[1].cuda()
             # data2[0] = data2[0].cuda()
             # data2[1] = data2[1].cuda()
-            # data3[0] = data3[0].cuda()
-            # data3[1] = data3[1].cuda()
+            data3[0] = data3[0].cuda()
+            data3[1] = data3[1].cuda()
             # data4[0] = data4[0].cuda()
             # data4[1] = data4[1].cuda()
 
