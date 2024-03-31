@@ -679,6 +679,7 @@ if __name__ == '__main__':
 
         for mode, mode_name in hashmap.items():
             score = get_score(score_folder, mode)
+            print(score.shape)
             best_acc, best_threshold, AUC = evaluate(score, gt, False)
             print(
                 f'Mode: {mode_name}:      Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)}')
