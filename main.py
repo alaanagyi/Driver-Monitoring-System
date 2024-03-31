@@ -649,6 +649,8 @@ if __name__ == '__main__':
         normal_vec_top_d = get_normal_vector(model_top_d, train_normal_loader_for_test_top_d, args.cal_vec_batch_size,
                                              args.feature_dim,
                                              args.use_cuda)
+        print(normal_vec_top_d.shape)
+
         np.save(os.path.join(args.normvec_folder, 'normal_vec_top_d.npy'), normal_vec_top_d.cpu().numpy())
 
         # normal_vec_top_ir = get_normal_vector(model_top_ir, train_normal_loader_for_test_top_ir,
