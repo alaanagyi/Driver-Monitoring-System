@@ -73,7 +73,7 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
     #     len(test_loader_top_ir))
     total_batch = int(len(test_loader_top_d))
     sim_list = torch.zeros(0)
-    sim_1_list = torch.zeros(0)
+    sim_1_list = torch.zeros(360000)
     sim_2_list = torch.zeros(0)
     sim_3_list = torch.zeros(0)
     sim_4_list = torch.zeros(0)
