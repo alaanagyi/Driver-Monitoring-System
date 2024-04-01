@@ -79,16 +79,16 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
     sim_4_list = torch.zeros(0)
     label_list = torch.zeros(0).type(torch.LongTensor)
     # for batch, (data1, data2, data3, data4) in enumerate(
-    for batch, data3 in enumerate(test_loader_top_d):
+    for batch, data3 in enumerate(test_loader_front_ir):
             # zip(test_loader_front_d, test_loader_front_ir, test_loader_top_d, test_loader_top_ir)):
 
         if use_cuda:
             # data1[0] = data1[0].cuda()
             # data1[1] = data1[1].cuda()
-            # data2[0] = data2[0].cuda()
-            # data2[1] = data2[1].cuda()
-            data3[0] = data3[0].cuda()
-            data3[1] = data3[1].cuda()
+            data2[0] = data2[0].cuda()
+            data2[1] = data2[1].cuda()
+            # data3[0] = data3[0].cuda()
+            # data3[1] = data3[1].cuda()
             # data4[0] = data4[0].cuda()
             # data4[1] = data4[1].cuda()
 
@@ -96,31 +96,31 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
         #        data1[1].size(0)
 
         # out_1 = model_front_d(data1[0])[1].detach()
-        # out_2 = model_front_ir(data2[0])[1].detach()
-        out_3 = model_top_d(data3[0])[1].detach()
+        out_2 = model_front_ir(data2[0])[1].detach()
+        # out_3 = model_top_d(data3[0])[1].detach()
         # out_4 = model_top_ir(data4[0])[1].detach()
 
         # sim_1 = torch.mm(out_1, normal_vec_front_d.t())
-        # sim_2 = torch.mm(out_2, normal_vec_front_ir.t())
-        sim_3 = torch.mm(out_3, normal_vec_top_d.t())
+        sim_2 = torch.mm(out_2, normal_vec_front_ir.t())
+        # sim_3 = torch.mm(out_3, normal_vec_top_d.t())
         # sim_4 = torch.mm(out_4, normal_vec_top_ir.t())
         # sim = (sim_1 + sim_2 + sim_3 + sim_4) / 4
-        sim = sim_3
+        sim = sim_2
 
         sim_list = torch.cat((sim_list, sim.squeeze().cpu()))
         label_list = torch.cat((label_list, data3[1].squeeze().cpu()))
         # sim_1_list = torch.cat((sim_1_list, sim_1.squeeze().cpu()))
-        # sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
-        sim_3_list = torch.cat((sim_3_list, sim_3.squeeze().cpu()))
+        sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
+        # sim_3_list = torch.cat((sim_3_list, sim_3.squeeze().cpu()))
         # sim_4_list = torch.cat((sim_4_list, sim_4.squeeze().cpu()))
         print(f'Evaluating: Batch {batch + 1} / {total_batch}')
 
     # np.save(os.path.join(score_folder, 'score_front_d.npy'), sim_1_list.numpy())
     # print('score_front_d.npy is saved')
-    # np.save(os.path.join(score_folder, 'score_front_IR.npy'), sim_2_list.numpy())
-    # print('score_front_IR.npy is saved')
-    np.save(os.path.join(score_folder, 'score_top_d.npy'), sim_3_list.numpy())
-    print('score_top_d.npy is saved')
+    np.save(os.path.join(score_folder, 'score_front_IR.npy'), sim_2_list.numpy())
+    print('score_front_IR.npy is saved')
+    # np.save(os.path.join(score_folder, 'score_top_d.npy'), sim_3_list.numpy())
+    # print('score_top_d.npy is saved')
     # np.save(os.path.join(score_folder, 'score_top_IR.npy'), sim_4_list.numpy())
     # print('score_top_IR.npy is saved')
 
