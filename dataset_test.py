@@ -3,6 +3,7 @@ import torch.utils.data as data
 from PIL import Image
 import os
 import csv
+
 def pil_loader(path):
     """
     open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
@@ -44,16 +45,6 @@ def pil_loader(path):
             continue
    
 
-def pil_loader(path):
-    """
-    open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-    :param path: image path
-    :return: image data
-    """
-    with open(path, 'rb') as f:
-        with Image.open(f) as img:
-            return img.convert('L')
-
 def accimage_loader(path):
     """
     compared with PIL, accimage loader eliminates useless function within class, so that it is faster than PIL
@@ -91,6 +82,7 @@ def get_video(video_path, frame_indices):
         image_path = os.path.join(video_path, image_name)
         img = image_reader(image_path)
         video.append(img)
+    print(len(video))
     return video
 
 def get_clips(video_path, video_begin, video_end, label, view, sample_duration):
@@ -157,28 +149,31 @@ def make_dataset(root_path, subset, view, sample_duration, type=None):
     :param type: during training process: type = None
     :return: list of data samples, each sample is in form {'video':video_path, 'label': 0/1, 'subset': 'train'/'validation', 'view': 'front_depth' / 'front_IR' / 'top_depth' / 'top_IR', 'action': 'normal' / other anormal actions}
     """
-
     dataset = []
-    if subset == 'validation' and type is None:
-        csv_path = os.path.join(root_path, 'LABEL.csv')
+    if subset == 'validation' and type == None:
+        #load valiation data as well as thier labels
+        csv_path = root_path + 'LABEL.csv'
         with open(csv_path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
-                if row[-1] == '' or row[0] == '' or row[1] == '':
+                if row[-1] == '':
                     continue
-                
-                which_val_path = os.path.join(root_path, row[0].strip())
-                video_path = os.path.join(which_val_path, row[1], view)
-                
+                if row[0] != '':
+                    which_val_path = os.path.join(root_path, row[0].strip())
+                if row[1] != '':
+                    video_path = os.path.join(which_val_path, row[1], view)
                 video_begin = int(row[2])
                 video_end = int(row[3])
-                
-                label = 1 if row[4] == 'N' else 0
+                if row[4] == 'N':
+                    label = 1
+                elif row[4] == 'A':
+                    label = 0
                 clips = get_clips(video_path, video_begin, video_end, label, view, sample_duration)
-                dataset += clips
+                dataset = dataset + clips
     else:
-        print('!!!DATA LOADING FAILURE!!! THIS DATASET IS ONLY USED IN TESTING MODE!!! PLEASE CHECK INPUT!!!')
+        print('!!!DATA LOADING FAILURE!!!THIS DATASET IS ONLY USED IN TESTING MODE!!!PLEASE CHECK INPUT!!!')
     return dataset
+
 
 class DAD_Test(data.Dataset):
     """
