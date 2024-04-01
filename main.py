@@ -233,6 +233,8 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
+        print("anormal length" , len(training_anormal_data))
+
 
         print("=================================Loading Normal-Driving Training Data!=================================")
         training_normal_data = DAD(root_path=args.root_path,
@@ -254,6 +256,8 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
+        print("normal length" , len(training_normal_data))
+
 
         print("========================================Loading Validation Data========================================")
         val_spatial_transform = spatial_transforms.Compose([
@@ -277,6 +281,7 @@ if __name__ == '__main__':
             num_workers=args.n_threads,
             pin_memory=True,
         )
+        print("validation data", validation_data )
 
         len_neg = training_anormal_data.__len__()
         len_pos = training_normal_data.__len__()
