@@ -510,7 +510,8 @@ if __name__ == '__main__':
             pin_memory=True,
         )
         num_val_data_front_ir = test_data_front_ir.__len__()
-        print('Front IR view is done')
+        print(f'Front IR view is done (size: {len(test_loader_front_ir)})')
+
 
         # test_data_top_d = DAD_Test(root_path=args.root_path,
         #                            subset='validation',
@@ -521,7 +522,7 @@ if __name__ == '__main__':
         #                            )
         # test_loader_top_d = torch.utils.data.DataLoader(
         #     test_data_top_d,
-        #     batch_size=args.val_batch_size,
+        #     btch_size=args.val_batch_size,
         #     shuffle=False,
         #     num_workers=args.n_threads,
         #     pin_memory=True,
