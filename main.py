@@ -510,7 +510,7 @@ if __name__ == '__main__':
             pin_memory=True,
         )
         num_val_data_front_ir = test_data_front_ir.__len__()
-        print(f'Front IR view is done (size: {len(test_loader_front_ir)})')
+        print(f'Front IR view is done (size: {len(test_data_front_ir)})')
 
 
         # test_data_top_d = DAD_Test(root_path=args.root_path,
