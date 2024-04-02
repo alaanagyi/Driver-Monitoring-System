@@ -71,7 +71,7 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
     """
     # assert int(len(test_loader_front_d)) == int(len(test_loader_front_ir)) == int(len(test_loader_top_d)) == int(
     #     len(test_loader_top_ir))
-    total_batch = int(len(test_loader_top_d))
+    total_batch = int(len(test_loader_front_ir))
     sim_list = torch.zeros(0)
     sim_1_list = torch.zeros(360000)
     sim_2_list = torch.zeros(0)
@@ -79,7 +79,7 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
     sim_4_list = torch.zeros(0)
     label_list = torch.zeros(0).type(torch.LongTensor)
     # for batch, (data1, data2, data3, data4) in enumerate(
-    for batch, data3 in enumerate(test_loader_front_ir):
+    for batch, data2 in enumerate(test_loader_front_ir):
             # zip(test_loader_front_d, test_loader_front_ir, test_loader_top_d, test_loader_top_ir)):
 
         if use_cuda:
@@ -108,7 +108,7 @@ def cal_score(model_front_d=None, model_front_ir=None, model_top_d=None, model_t
         sim = sim_2
 
         sim_list = torch.cat((sim_list, sim.squeeze().cpu()))
-        label_list = torch.cat((label_list, data3[1].squeeze().cpu()))
+        label_list = torch.cat((label_list, data2[1].squeeze().cpu()))
         # sim_1_list = torch.cat((sim_1_list, sim_1.squeeze().cpu()))
         sim_2_list = torch.cat((sim_2_list, sim_2.squeeze().cpu()))
         # sim_3_list = torch.cat((sim_3_list, sim_3.squeeze().cpu()))

@@ -668,7 +668,7 @@ if __name__ == '__main__':
         # cal_score(model_front_d, model_top_d, normal_vec_front_d,
         #           normal_vec_top_d, test_loader_front_d,
         #           test_loader_top_d, score_folder, args.use_cuda)
-        cal_score(model_front_ir=model_front_ir,normal_vec_front_ir=normal_vec_front_ir, test_loader_top_ir=test_loader_top_ir, 
+        cal_score(model_front_ir=model_front_ir,normal_vec_front_ir=normal_vec_front_ir, test_loader_front_ir=test_loader_front_ir, 
                   score_folder=score_folder,use_cuda=args.use_cuda)
 
         gt = get_fusion_label(os.path.join(args.root_path, 'LABEL.csv'))
@@ -695,6 +695,7 @@ if __name__ == '__main__':
             best_acc, best_threshold, AUC = evaluate(score, gt, False)
             print(
                 f'View: {mode_name}(post-processed):       Best Acc: {round(best_acc, 2)} | Threshold: {round(best_threshold, 2)} | AUC: {round(AUC, 4)} \n')
-batch_writer.close()
-epoch_writer.close()
-val_writer.close()
+        
+        batch_writer.close()
+        epoch_writer.close()
+        val_writer.close()

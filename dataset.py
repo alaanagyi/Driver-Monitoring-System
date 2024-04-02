@@ -15,12 +15,12 @@ def pil_loader(path):
                 #return img.convert('RGB')
                 return img.convert('L')
     except:
-        all_parts = path.split("\\")
+        all_parts = path.split("/")
         img_p = all_parts[-1]
         img_num = int(img_p.replace('img_', '').replace('.png', ''))
         while img_num >= 0:
             try:
-                path = "\\".join(all_parts[:-1]) + f"\\img_{img_num-1}.png"
+                path = "/".join(all_parts[:-1]) + f"/img_{img_num-1}.png"
                 with open(path, 'rb') as f:
                     with Image.open(f) as img:
                         #return img.convert('RGB')
@@ -29,12 +29,12 @@ def pil_loader(path):
                 img_num -= 1
                 continue
 
-    all_parts = path.split("\\")
+    all_parts = path.split("/")
     img_p = all_parts[-1]
     img_num = int(img_p.replace('img_', '').replace('.png', ''))
     while img_num <= 10000:
         try:
-            path = "\\".join(all_parts[:-1]) + f"\\img_{img_num+1}.png"
+            path = "/".join(all_parts[:-1]) + f"/img_{img_num+1}.png"
             with open(path, 'rb') as f:
                 with Image.open(f) as img:
                     #return img.convert('RGB')
@@ -44,12 +44,12 @@ def pil_loader(path):
             continue
    
 
-    all_parts = path.split("\\")
+    all_parts = path.split("/")
     img_p = all_parts[-1]
     img_num = int(img_p.replace('img_', '').replace('.png', ''))
     while img_num <= 10000:
         try:
-            path = "\\".join(all_parts[:-1]) + f"\\img_{img_num+1}.png"
+            path = "/".join(all_parts[:-1]) + f"/img_{img_num+1}.png"
             with open(path, 'rb') as f:
                 with Image.open(f) as img:
                     #return img.convert('RGB')
