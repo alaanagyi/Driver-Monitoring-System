@@ -11,7 +11,7 @@ from NCEAverage import NCEAverage
 from NCECriterion import NCECriterion
 import torch.backends.cudnn as cudnn
 from temporal_transforms import TemporalSequentialCrop
-from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2
+from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2, video_swin_transformer
 import ast
 import numpy as np
 from dataset_test import DAD_Test
@@ -79,7 +79,7 @@ def parse_args():
     parser.add_argument('--a_split_ratio', default=1.0, type=float,
                         help='the ratio of normal driving samples will be used during training')
     parser.add_argument('--window_size', default=6, type=int, help='the window size for post-processing')
-
+    
     args = parser.parse_args()
     return args
 
@@ -301,7 +301,8 @@ if __name__ == '__main__':
             model_head = mobilenet.ProjectionHead(args.feature_dim)
         elif args.model_type == 'mobilenetv2':
             model_head = mobilenetv2.ProjectionHead(args.feature_dim)
-        
+        elif args.model_type == 'swintiny':
+            model_head = video_swin_transformer.PatchEmbed3D()
         if args.use_cuda:
             model_head.cuda()
 
