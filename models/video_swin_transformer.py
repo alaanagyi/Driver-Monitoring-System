@@ -15,27 +15,23 @@ from operator import mul
 from einops import rearrange
 
 import logging
-from mmcv.utils import get_logger
+# from mmcv.utils import get_logger
 from mmcv.runner import load_checkpoint
 
+class ProjectionHead(nn.Module):
+    def __init__(self, output_dim):
+        super(ProjectionHead, self).__init__()
+        self.hidden = nn.Linear(512, 256)
+        self.relu = nn.ReLU(inplace=True)
+        self.out = nn.Linear(256, output_dim)
 
-def get_root_logger(log_file=None, log_level=logging.INFO):
-    """Use ``get_logger`` method in mmcv to get the root logger.
-    The logger will be initialized if it has not been initialized. By default a
-    StreamHandler will be added. If ``log_file`` is specified, a FileHandler
-    will also be added. The name of the root logger is the top-level package
-    name, e.g., "mmaction".
-    Args:
-        log_file (str | None): The log filename. If specified, a FileHandler
-            will be added to the root logger.
-        log_level (int): The root logger level. Note that only the process of
-            rank 0 is affected, while other processes will set the level to
-            "Error" and be silent most of the time.
-    Returns:
-        :obj:`logging.Logger`: The root logger.
-    """
-    return get_logger(__name__.split('.')[0], log_file, log_level)
+    def forward(self, x):
+        x = self.hidden(x)
+        x = self.relu(x)
+        x = self.out(x)
+        x = F.normalize(x, p=2, dim=1)
 
+        return x
 
 class Mlp(nn.Module):
     """ Multilayer perceptron."""
@@ -163,6 +159,7 @@ class WindowAttention3D(nn.Module):
             mask: (0/-inf) mask with shape of (num_windows, N, N) or None
         """
         B_, N, C = x.shape
+        
         qkv = self.qkv(x).reshape(B_, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
         q, k, v = qkv[0], qkv[1], qkv[2]  # B_, nH, N, C
 
@@ -426,8 +423,7 @@ class BasicLayer(nn.Module):
             x = self.downsample(x)
         x = rearrange(x, 'b d h w c -> b c d h w')
         return x
-
-
+    
 class PatchEmbed3D(nn.Module):
     """ Video to Patch Embedding.
     Args:
@@ -436,7 +432,7 @@ class PatchEmbed3D(nn.Module):
         embed_dim (int): Number of linear projection output channels. Default: 96.
         norm_layer (nn.Module, optional): Normalization layer. Default: None
     """
-    def __init__(self, patch_size=(2,4,4), in_chans=3, embed_dim=96, norm_layer=None):
+    def __init__(self, patch_size=(2,4,4), in_chans=1, embed_dim=96, norm_layer=None):
         super().__init__()
         self.patch_size = patch_size
 
@@ -496,8 +492,8 @@ class SwinTransformer3D(nn.Module):
     def __init__(self,
                  pretrained=None,
                  pretrained2d=True,
-                 patch_size=(4,4,4),
-                 in_chans=3,
+                 patch_size=(2, 4, 4),
+                 in_chans=1,
                  embed_dim=96,
                  depths=[2, 2, 6, 2],
                  num_heads=[3, 6, 12, 24],
@@ -522,7 +518,8 @@ class SwinTransformer3D(nn.Module):
         self.frozen_stages = frozen_stages
         self.window_size = window_size
         self.patch_size = patch_size
-
+        self.flatten = nn.Flatten()
+        self.fc = nn.Linear(768 * 4 * 4 * 4, 512)
         # split image into non-overlapping patches
         self.patch_embed = PatchEmbed3D(
             patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim,
@@ -643,15 +640,15 @@ class SwinTransformer3D(nn.Module):
             self.pretrained = pretrained
         if isinstance(self.pretrained, str):
             self.apply(_init_weights)
-            logger = get_root_logger()
-            logger.info(f'load model from: {self.pretrained}')
+            #logger = get_root_logger()
+            #logger.info(f'load model from: {self.pretrained}')
 
-            if self.pretrained2d:
-                # Inflate 2D model into 3D model.
-                self.inflate_weights(logger)
-            else:
+            #if self.pretrained2d:
+            #    # Inflate 2D model into 3D model.
+            #    self.inflate_weights(logger)
+            #else:
                 # Directly load 3D model.
-                load_checkpoint(self, self.pretrained, strict=False, logger=logger)
+                #load_checkpoint(self, self.pretrained, strict=False, logger=logger)
         elif self.pretrained is None:
             self.apply(_init_weights)
         else:
@@ -660,7 +657,6 @@ class SwinTransformer3D(nn.Module):
     def forward(self, x):
         """Forward function."""
         x = self.patch_embed(x)
-
         x = self.pos_drop(x)
 
         for layer in self.layers:
@@ -669,8 +665,10 @@ class SwinTransformer3D(nn.Module):
         x = rearrange(x, 'n c d h w -> n d h w c')
         x = self.norm(x)
         x = rearrange(x, 'n d h w c -> n c d h w')
-
-        return x
+        x = self.flatten(x)
+        x = self.fc(x)
+        normed_x = F.normalize(x, p=2, dim=1)
+        return x,normed_x
 
     def train(self, mode=True):
         """Convert the model into training mode while keep layers freezed."""

@@ -103,6 +103,8 @@ def train(train_normal_loader, train_anormal_loader, model, model_head, nce_aver
             normal_data = normal_data.cuda()
 
         # ================forward====================
+        #output = model(data)
+        #print(output)
         unnormed_vec, normed_vec = model(data)
         vec = model_head(unnormed_vec)
         n_vec = vec[0:args.n_train_batch_size]
@@ -302,7 +304,7 @@ if __name__ == '__main__':
         elif args.model_type == 'mobilenetv2':
             model_head = mobilenetv2.ProjectionHead(args.feature_dim)
         elif args.model_type == 'swintiny':
-            model_head = video_swin_transformer.PatchEmbed3D()
+            model_head = video_swin_transformer.ProjectionHead(args.feature_dim)
         if args.use_cuda:
             model_head.cuda()
 

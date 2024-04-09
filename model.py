@@ -67,7 +67,9 @@ def generate_model(args):
                 pre_train=args.pre_train_model
             )
         elif args.model_type == 'swintiny':
-            model = video_swin_transformer.get_model()
+            model = video_swin_transformer.get_model(
+                #embed_dim=args.embed_dim
+            )
 
         model = nn.DataParallel(model, device_ids=None)
     else:
