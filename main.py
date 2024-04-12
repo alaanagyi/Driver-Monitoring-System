@@ -11,7 +11,7 @@ from NCEAverage import NCEAverage
 from NCECriterion import NCECriterion
 import torch.backends.cudnn as cudnn
 from temporal_transforms import TemporalSequentialCrop
-from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2, video_swin_transformer
+from models import resnet, shufflenet, shufflenetv2, mobilenet, mobilenetv2, video_swin_transformer, cvt2
 import ast
 import numpy as np
 from dataset_test import DAD_Test
@@ -305,6 +305,8 @@ if __name__ == '__main__':
             model_head = mobilenetv2.ProjectionHead(args.feature_dim)
         elif args.model_type == 'swintiny':
             model_head = video_swin_transformer.ProjectionHead(args.feature_dim)
+        elif args.model_type == 'CvT':
+            model_head = cvt2.ProjectionHead(args.feature_dim)
         if args.use_cuda:
             model_head.cuda()
 
