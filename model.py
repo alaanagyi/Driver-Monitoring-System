@@ -1,10 +1,10 @@
 import torch
 from torch import nn
-from models import shufflenet, shufflenetv2, resnet, mobilenet, mobilenetv2, video_swin_transformer
+from models import shufflenet, shufflenetv2, resnet, mobilenet, mobilenetv2, video_swin_transformer, cvt2
 from utils import _construct_depth_model
 
 def generate_model(args):
-    assert args.model_type in ['resnet', 'shufflenet', 'shufflenetv2', 'mobilenet', 'mobilenetv2','swintiny']
+    assert args.model_type in ['resnet', 'shufflenet', 'shufflenetv2', 'mobilenet', 'mobilenetv2','swintiny', 'CvT']
     if args.pre_train_model == False or args.mode == 'test':
         print('Without Pre-trained model')
         if args.model_type == 'resnet':
@@ -68,6 +68,10 @@ def generate_model(args):
             )
         elif args.model_type == 'swintiny':
             model = video_swin_transformer.get_model(
+                #embed_dim=args.embed_dim
+            )
+        elif args.model_type == 'CvT':
+            model = cvt2.get_cls_model(
                 #embed_dim=args.embed_dim
             )
 
